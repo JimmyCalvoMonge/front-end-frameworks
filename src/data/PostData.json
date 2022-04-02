@@ -1,38 +1,53 @@
 [
     
         {
-            "user":"eric",
-            "description":"Some quick example text to build on the card title and make up the bulk of the card's content",
-            "date":"13/03/2022 10:47",
+            "autor":"julio",
+            "text":"Hello! This is a post I published in this app. I hope you like it! Thanks!",
+            "createdAt":"13/03/2022 10:47",
+            "comments": 15,
+            "image": "https://source.unsplash.com/random/800x800",
+            "likes":10,            
             "id":"1"
         },
 
         {
-            "user":"eric",
-            "description":"Some quick example text to build on the card title and make up the bulk of the card's content",
-            "date":"13/03/2022 10:47",
+            "autor":"jimmy",
+            "text":"Hello everybody, I hope you enjoy this picture I have just posted. I really like it too!",
+            "createdAt":"13/03/2022 10:47",
+            "comments": 19,
+            "image": "https://source.unsplash.com/random/800x800",
+            "likes":20,        
             "id":"2"
         },
 
         {
-            "user":"eric",
-            "description":"Some quick example text to build on the card title and make up the bulk of the card's content",
-            "date":"13/03/2022 10:47",
+            "autor":"maria",
+            "text":"Hi .. so I published this photo and I really like it, please hit the like button!",
+            "createdAt":"13/03/2022 10:47",
+            "comments": 33,
+            "image": "https://source.unsplash.com/random/800x800",
+            "likes":30,        
             "id":"3"
         },
 
 
         {
-            "user":"eric",
-            "description":"Some quick example text to build on the card title and make up the bulk of the card's content",
-            "date":"13/03/2022 10:47",
+            "autor":"juana",
+            "text":"Hi there you. Do you like this photo? I do. Click the like button and help me!",
+            "createdAt":"13/03/2022 10:47",
+            "comments": 7,
+            "image": "https://source.unsplash.com/random/800x800",
+            "likes":40,        
             "id":"4"
         },
 
         {
-            "user":"eric",
-            "description":"Some quick example text to build on the card title and make up the bulk of the card's content",
-            "date":"13/03/2022 10:47",
+            "autor":"jose",
+            "text":"Hi guys! What do you think of this photo? I enjoyed it very much. Hit the like button.",
+            "createdAt":"13/03/2022 10:47",
+            "comments": 3,
+            "image": "https://source.unsplash.com/random/800x800",
+            "likes":50,        
             "id":"5"
         }
 

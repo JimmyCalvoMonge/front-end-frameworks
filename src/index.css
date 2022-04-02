@@ -11,3 +11,50 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*Componente que contiene la imagen del perfil 
+Se agregaron unas cuantas media queries para controlar la longitud de la imagen
+*/
+
+.center-div{
+  text-align: center;
+  margin:auto;
+  margin-top:5%;
+  margin-bottom: 5%;
+}
+
+.center-div img{
+  border-radius:100%;
+  height: auto;
+}
+
+@media screen and (max-width: 480px) {
+  .center-div img{
+    width: 65%;
+  }
+}
+
+@media screen and (min-width: 480px) {
+  .center-div img{
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 576px) {
+  .center-div img{
+    width: 40%;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .center-div img{
+    width: 30%;
+  }
+}
+
+.center-div hr{
+  background-color: white;
+  width: 75%;
+  margin: auto;
+  margin-top:5%;
+}
