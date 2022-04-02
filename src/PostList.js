@@ -17,12 +17,12 @@ class PostList extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = {display : 'd-none'};
+        this.state = {display : false};
     }
 
     show(){
         this.setState({
-            display: 'row',
+            display: true,
         })
     }
 
@@ -40,7 +40,7 @@ class PostList extends React.Component{
         return (
 
             <div>
-            {this.state.display==='row' ?
+            {this.state.display===true ?
                 <div className='row'>
                     {this.props.posts.map((post)=>(
                         <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12" key={post.id}>
