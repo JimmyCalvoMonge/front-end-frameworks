@@ -6,7 +6,6 @@ import NavBar from './NavBar';
 import PostList from './PostList';
 import Profile from './Profile';
 import SearchBar from './SearchBar';
-import profilepic from './assets/face.jpg';
 
 class App extends React.Component{
 
