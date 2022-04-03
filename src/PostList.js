@@ -17,7 +17,7 @@ class PostList extends React.Component{
 
     constructor(props) {
         super(props);
-        this.state = {display : false};
+        this.state = {display : false, episodes : []};
     }
 
     show(){
@@ -27,11 +27,14 @@ class PostList extends React.Component{
     }
 
     componentDidMount() {
+
         var that = this;
         setTimeout(function() {
             that.show();
             console.log('Hello, The posts have just appeared after 3 seconds...')
         }, 3000);
+
+        console.log(this.state.episodes);
     };
 
     
