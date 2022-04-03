@@ -11,7 +11,8 @@ class App extends React.Component{
 
   state={
     posts:[],
-    value:"",
+    posts_to_show:[],  // He bajado los posts de la respuesta de la api, pero los posts para mostrar serán sólo un fitro de los mismos.
+    value:" ",
     section:"posts",
     loginOk: false,
 
@@ -78,9 +79,6 @@ class App extends React.Component{
         - Examinando el array response.data hice un pequeño parsing para lidiar con este error.
         */
 
-        console.log(response.data[50]);
-        console.log(response.data[100]);
-
         let response_data_parsed=[];
 
         for(let i=0; i<response.data.length; i++){
@@ -114,7 +112,8 @@ class App extends React.Component{
         }
 
         this.setState({
-          posts: response_data_parsed
+          posts: response_data_parsed,
+          posts_to_show: response_data_parsed
         });
 
         this.setState({
@@ -132,14 +131,19 @@ class App extends React.Component{
   };
 
   onSearch(newValue){
+
     this.setState({
       //Aquí filtramos los posts de acuerdo al input del Search Bar.
       //Lo haremos con búsqueda por minúscula.
-      posts: this.state.posts.filter( post => post.text.toLowerCase().includes(newValue.toLowerCase())),
+      // Filtramos los posts que hemos recibido de la respuesta de la API.
+
+      // He separado en dos states (posts y posts_to_show) porque si lo hacía sólo con uno, obtenía errores
+      // a la hora de hacer los filtros , ya que modificaba el posts original sin ir vuelta atrás.
+      
+      posts_to_show: this.state.posts.filter( post => post.text.toLowerCase().includes(newValue.toLowerCase())),
       //También cambiamos el valor guardado en la aplicación.
       value: newValue,
     });
-    console.log(this.state.posts);
   }
 
   onLogoClick(){
@@ -165,7 +169,7 @@ class App extends React.Component{
 
           {/* Nos fijamos en el estado de la app component para decidir si desplegamos los posts o el perfil*/}
           {this.state.section==="posts" && <SearchBar value={this.state.value}  onSearch={(val)=>{this.onSearch(val);}}></SearchBar>}
-          {this.state.section==="posts" && <PostList posts={this.state.posts} display={'d-none'}></PostList>}
+          {this.state.section==="posts" && <PostList posts={this.state.posts_to_show} display={'d-none'}></PostList>}
           {this.state.section==="profile" && <Profile avatar={this.state.profilepic} username={this.state.username} bio={this.state.bio}></Profile>}
 
           </div>
