@@ -1,65 +1,39 @@
-import React from 'react';
+import React, {useState, useEffect} from "react";
 import Post from './Post';
-
 
 /* Para hacer que la componente PostList apareciera después de 3 segundos
 he utilizado una variable display como state para indicar si se debe mostrar
-la lista de posts o no. También usé el componentDidMount() para lograr esto.
+la lista de posts o no. 
 
-Me ayudé con la siguiente referencia:
-https://stackoverflow.com/questions/30803440/delayed-rendering-of-react-components
-
-Stackoverflow, lo sé, pero me ha ayudado mucho en el pasado :)
+Se ha trasladado esta componente para que sea funcional y que haga uso de Hooks.
 */
 
+function PostList ({posts}){
 
-class PostList extends React.Component{
+    const [display,setDisplay] = useState(false);
 
-    constructor(props) {
-        super(props);
-        this.state = {display : false, episodes : []};
-    }
-
-    show(){
-        this.setState({
-            display: true,
-        })
-    }
-
-    componentDidMount() {
-
-        var that = this;
+    useEffect(()=>{
         setTimeout(function() {
-            that.show();
-            console.log('Hello, The posts have just appeared after 3 seconds...')
+            setDisplay(true);
         }, 3000);
-
-        console.log(this.state.episodes);
-    };
-
     
-    render() {
+      }, [])
 
-        return (
+      return (
 
-            <div>
-            {this.state.display===true ?
-                <div className='row'>
-                    {this.props.posts.map((post)=>(
-                        <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12" key={post.id}>
-                            <Post autor={post.autor} text={post.text} createdAt={post.createdAt} comments={post.comments} image={post.image} likes={post.likes}></Post>
-                        </div>
-                    ))}
-            </div>  : <div className='center-div'> Loading ... </div> 
-            
-            }
-
-            </div>
-
-        
-        
-        )
-    }
-};
+        <div>
+        {display===true ?
+            <div className='row'>
+                {posts.map((post)=>(
+                    <div className="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-xs-12" key={post.id}>
+                        <Post autor={post.autor} text={post.text} createdAt={post.createdAt} comments={post.comments} image={post.image} likes={post.likes}></Post>
+                    </div>
+                ))}
+        </div>  : <div className='center-div'> Loading ... </div> 
+        }
+        </div>
+    
+    )
+}
 
 export default PostList;

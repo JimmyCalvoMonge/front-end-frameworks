@@ -1,4 +1,6 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
+import {Route,Routes} from "react-router";
+import {Link, useNavigate} from "react-router-dom";
 import axios from 'axios';
 
 import Login from './Login';
@@ -7,51 +9,20 @@ import PostList from './PostList';
 import Profile from './Profile';
 import SearchBar from './SearchBar';
 
-class App extends React.Component{
+// Hemos cambiado la componente App para que sea funcional
 
-  state={
-    posts:[],
-    posts_to_show:[],  // He bajado los posts de la respuesta de la api, pero los posts para mostrar serán sólo un fitro de los mismos.
-    value:" ",
-    section:"posts",
-    loginOk: false,
+function App () { 
+  const [posts, setPosts] = useState([])
+  const [posts_to_show, setPostsToShow] = useState([])
+  const [value, setValue] = useState(" ")
+  const [section, setSection] = useState("no-login")  // Este state es para ver si se ha hecho un login o no.
+  const [currentUser, setCurrentUser] = useState([])
 
+  const navigate = useNavigate();
 
-    // Estos otros states los he agregado porque de los datos de la API se 
-    // pueden obtener el profilepic, la bio y el username del usuario que acaba de ingresar a la app.
+  function onLoginComplete (){
 
-    profilepic:"",
-    username:"",
-    bio:"",
-
-
-  };
-
-
-  componentDidMount = () =>{
-
-    // Cada vez que se inicie la aplicación web se deberá verificar si existe el token del usuario en el localStorage
-    // del navegador. Si existe, se accederá al listado de posts. En caso contrario, se mostrará la pantalla de login. 
-    
-    if(localStorage.getItem('token')){
-      this.setState({
-        loginOk: true,
-      })
-      
-      this.onLoginComplete(true);
-
-
-    } else{
-      this.setState({
-        loginOk: false
-      })
-    }
-
-  }
-
-  onLoginComplete = (loginOknew) =>{
-
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('token');
     console.log("Este es el token del usuario:");
     console.log(token);
 
@@ -64,20 +35,10 @@ class App extends React.Component{
 
         console.log("Success: ", response);
 
-        /* La data que viene de la Api no está lista exactamente para usarse como parte del state.
-        Cada elemento del array response.data puede tener valores que no son strings, sino objetos.
-        Cuando hice:
+        // Hay un login exitoso, cambiamos el state en esta parte.
+        setSection("yes-login");
 
-        this.setState({
-          posts: response.data
-        })
-
-        Obtuve el siguiente error en consola:
-
-        Objects are not valid as a React child. If you meant to render a collection of children, use an array instead.
-
-        - Examinando el array response.data hice un pequeño parsing para lidiar con este error.
-        */
+        //Aquí hacemos el mismo parsing de la respuesta de la API que hicimos en la actividad 3.
 
         let response_data_parsed=[];
 
@@ -94,31 +55,28 @@ class App extends React.Component{
             }
           )
 
+
+          // Guardamos el username que recibimos desde login, una vez que lo encontramos en el
+          // listado de posts. Supongo que este username está en los posts que se reciben desde la API response.
+
           if(response.data[i].author.username===localStorage.getItem("username")){
 
-            // Hemos encontrado al usuario que se acaba de conectar en la app
-            // dentro de la response.data
-            // Entonces cambiamos el profilepic, username y bio a los de este usuario.
+            setCurrentUser(
+              {
+                avatar:response.data[i].author.avatar,
+                username:response.data[i].author.username,
+                bio:response.data[i].author.bio,
+              }
+            )
 
-
-            this.setState({
-              profilepic:response.data[i].author.avatar,
-              username:response.data[i].author.username,
-              bio:response.data[i].author.bio,
-            })
           }
-
 
         }
 
-        this.setState({
-          posts: response_data_parsed,
-          posts_to_show: response_data_parsed
-        });
+        // Hacemos un set de los posts y los posts para mostrar 
 
-        this.setState({
-          loginOk: loginOknew,
-        })
+        setPosts(response_data_parsed)
+        setPostsToShow(response_data_parsed)
 
 
       }
@@ -130,71 +88,90 @@ class App extends React.Component{
 
   };
 
-  onSearch(newValue){
-
-    this.setState({
-      //Aquí filtramos los posts de acuerdo al input del Search Bar.
-      //Lo haremos con búsqueda por minúscula.
-      // Filtramos los posts que hemos recibido de la respuesta de la API.
-
-      // He separado en dos states (posts y posts_to_show) porque si lo hacía sólo con uno, obtenía errores
-      // a la hora de hacer los filtros , ya que modificaba el posts original sin ir vuelta atrás.
-      
-      posts_to_show: this.state.posts.filter( post => post.text.toLowerCase().includes(newValue.toLowerCase())),
-      //También cambiamos el valor guardado en la aplicación.
-      value: newValue,
-    });
+  function onSearch(newValue) {
+    setPostsToShow(posts.filter( post => post.text.toLowerCase().includes(newValue.toLowerCase())))
+    setValue(newValue)
   }
 
-  onLogoClick(){
-    this.setState({
-      section: "posts",
-    });
+  function onLogoClick() {
+    navigate("/");
   }
   
-  onProfileClick(){
-    this.setState({
-      section: "profile",
-    });
-  }
+  function onProfileClick() {
+    navigate("/profile");
 
-  render() {
+  };
 
-    const getComponent = () => {
-      switch(this.state.loginOk){
-        case true:
-          return <div>
+  //Sustitución del ComponendDidMount() con el hook useEffect
 
-          <NavBar onLogoClick={()=>{this.onLogoClick();}} onProfileClick={()=>{this.onProfileClick();}}></NavBar>
+  useEffect(()=>{
 
-          {/* Nos fijamos en el estado de la app component para decidir si desplegamos los posts o el perfil*/}
-          {this.state.section==="posts" && <SearchBar value={this.state.value}  onSearch={(val)=>{this.onSearch(val);}}></SearchBar>}
-          {this.state.section==="posts" && <PostList posts={this.state.posts_to_show} display={'d-none'}></PostList>}
-          {this.state.section==="profile" && <Profile avatar={this.state.profilepic} username={this.state.username} bio={this.state.bio}></Profile>}
+    if(localStorage.getItem('token')){
+      onLoginComplete(true);
+    } else{
+      
+      // Si no hay un token guardado entonces redirigimos el usuario a la dirección /login después de 2 segundos.
+      // Para esto he utilizado useNavigate de react-router-dom también.
 
-          </div>
-        case false:
-          return <div>
-          <Login onLoginComplete={this.onLoginComplete}></Login>
-          </div>
-      }
+      // Note que esto va a impedir que mostremos la ruta "/" si no hay un token guardado
+      // en el navegador. Por tanto siempre que haya un token guardado, el useEffect nos permitirá
+      // mostrar toda la información de la página "/"
+
+      setTimeout(function() {
+        setSection("no-login");
+        navigate("/login"); 
+      }, 2000);
     }
 
-    return (
-      <div className="App">
+  }, [])
 
-      <main>
-        {getComponent()}
-      </main>
+  return (
 
-        
+    <div className="App">
+
+    <Routes>
+
+      {/*Componente de PostList para la ruta "/" */}
+
+      <Route path="/" element={
+        <div>
+          <NavBar onLogoClick={onLogoClick} onProfileClick={onProfileClick}></NavBar>
+
+          {section==="yes-login" && <div>
+            <SearchBar value={value} onSearch={(val)=>{onSearch(val);}}></SearchBar>
+            <PostList posts={posts_to_show} display={'d-none'}></PostList>
+          </div>
+          }
+
+        </div>}>
+      </Route>
+
+      {/*Componente de PostList para la ruta "/" */}
+
+      <Route path="/login" element = {
+        <div>
+          <Login onLoginComplete={onLoginComplete}></Login>
+        </div>
+      }>
+      </Route>
+
+      {/*Componente para Profile para la ruta "/profile"*/}
+
+      <Route path="/profile" element={
+        <div>
+          <NavBar onLogoClick={onLogoClick} onProfileClick={onProfileClick}></NavBar>
+          <Profile avatar={currentUser.avatar} username={currentUser.username} bio={currentUser.bio}></Profile>
+        </div>
+      }>
+
+      </Route>
+
+    </Routes>
       
-        
-      </div>
-    );
-  }
+    </div>
+  );
+
 
 }
-
 
 export default App;
